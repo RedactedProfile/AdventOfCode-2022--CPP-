@@ -24,7 +24,7 @@ int main()
 			{ "Scissors", { "Scissors", 3 } },
 		};
 
-		std::unordered_map<const char*, Hand> playerInputMap = {
+		std::unordered_map<std::string, Hand> playerInputMap = {
 			{ "A", shapes["Rock"] },
 			{ "B", shapes["Paper"] },
 			{ "C", shapes["Scissors"] },
@@ -33,33 +33,49 @@ int main()
 			{ "Z", shapes["Scissors"] },
 		};
 
-		std::unordered_map<Hand, Hand> winMap = {
-			{ shapes["Rock"], shapes["Scissors"] },
-			{ shapes["Paper"], shapes["Rock"] },
-			{ shapes["Scissors"], shapes["Paper"] },
+		std::unordered_map<std::string, Hand> winMap = {
+			{ shapes["Rock"].shape, shapes["Scissors"] },
+			{ shapes["Paper"].shape, shapes["Rock"] },
+			{ shapes["Scissors"].shape, shapes["Paper"] },
 		};
 
-		std::unordered_map<std::string, uint16_t> scoreMap = {
+		std::unordered_map<const char*, uint16_t> scoreMap = {
 			{ "w", 6 },
-			{ "d", 0 },
-			{ "t", 3 },
+			{ "l", 0 },
+			{ "d", 3 },
 		};
 
 		uint32_t Evaluate(Hand player1, Hand player2)
 		{
 			uint32_t score = 0;
 
+			score += player1.score;
+
 			// determine draw 
 			if (player1.shape == player2.shape)
 			{
+				std::cout << player1.shape << " ties " << player2.shape << std::endl;
 				score += scoreMap["d"];
 			}
-			else
+			else if(player2.shape == winMap[player1.shape].shape)
 			{
-				
+				std::cout << player1.shape << " beats " << player2.shape << std::endl;
+				score += scoreMap["w"];
+			}
+			else if (player1.shape == winMap[player2.shape].shape)
+			{
+				std::cout << player2.shape << " loses to " << player1.shape << std::endl;
+				score += scoreMap["l"];
 			}
 
+			std::cout << "Earned score: " << score << std::endl;
+
 			return score;
+		}
+
+		uint32_t Evaluate(std::string player1, std::string player2)
+		{
+			return Evaluate(playerInputMap[player1], playerInputMap[player2]);
 		}
 	};
 
@@ -76,16 +92,25 @@ int main()
 
 	std::ifstream file("input.txt");
 
+	//std::cout << "total score: " << game.gameScore << std::endl;
+	//game.gameScore += game.Evaluate("Y", "A");
+	//std::cout << "total score: " << game.gameScore << std::endl;
+	//game.gameScore += game.Evaluate("X", "B");
+	//std::cout << "total score: " << game.gameScore << std::endl;
+	//game.gameScore += game.Evaluate("Z", "C");
+	//std::cout << "total score: " << game.gameScore << std::endl;
+
 	if (file.is_open())
 	{
 		std::string line;
 		while (std::getline(file, line)) {
-
+			game.gameScore += game.Evaluate(std::string{ line[2] }, std::string{ line[0] });
 		}
 	}
 
 	file.close();
 
+	std::cout << "Total Game Score: " << game.gameScore << std::endl;
 	
 	return 0;
 }
