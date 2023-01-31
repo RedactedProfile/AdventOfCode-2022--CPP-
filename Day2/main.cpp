@@ -39,12 +39,6 @@ int main()
 			{ shapes["Scissors"].shape, shapes["Paper"] },
 		};
 
-		std::unordered_map<std::string, Hand> loseMap = {
-			{ shapes["Rock"].shape, shapes["Paper"] },
-			{ shapes["Paper"].shape, shapes["Scissors"] },
-			{ shapes["Scissors"].shape, shapes["Rock"] },
-		};
-
 		std::unordered_map<const char*, uint16_t> scoreMap = {
 			{ "w", 6 },
 			{ "l", 0 },
@@ -60,21 +54,21 @@ int main()
 			// determine draw 
 			if (player1.shape == player2.shape)
 			{
-				std::cout << player1.shape << " ties " << player2.shape << std::endl;
+				//std::cout << player1.shape << " ties " << player2.shape << std::endl;
 				score += scoreMap["d"];
 			}
 			else if(player2.shape == winMap[player1.shape].shape)
 			{
-				std::cout << player1.shape << " beats " << player2.shape << std::endl;
+				//std::cout << player1.shape << " beats " << player2.shape << std::endl;
 				score += scoreMap["w"];
 			}
 			else if (player1.shape == winMap[player2.shape].shape)
 			{
-				std::cout << player2.shape << " loses to " << player1.shape << std::endl;
+				//std::cout << player2.shape << " loses to " << player1.shape << std::endl;
 				score += scoreMap["l"];
 			}
 
-			std::cout << "Earned score: " << score << std::endl;
+			//std::cout << "Earned score: " << score << std::endl;
 
 			return score;
 		}
@@ -108,6 +102,13 @@ int main()
 	//game.gameScore += game.Evaluate("Z", "C");
 	//std::cout << "total score: " << game.gameScore << std::endl;
 
+
+	// Making a disposable "loseMap" which is just the reverse of the defined winMap
+	std::unordered_map<std::string, Hand> loseMap = {};
+	for (auto& it : game.winMap) {
+		loseMap[it.second.shape] = game.shapes[it.first];
+	}
+
 	if (file.is_open())
 	{
 		std::string line;
@@ -132,7 +133,7 @@ int main()
 			}
 			else if (playerInput == "Z") {
 				// force win
-				playerHand = game.loseMap[opponentHand.shape];
+				playerHand = loseMap[opponentHand.shape];
 			}
 
 			game2.gameScore += game2.Evaluate(playerHand, opponentHand);
