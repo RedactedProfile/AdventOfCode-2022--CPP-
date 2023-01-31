@@ -39,6 +39,12 @@ int main()
 			{ shapes["Scissors"].shape, shapes["Paper"] },
 		};
 
+		std::unordered_map<std::string, Hand> loseMap = {
+			{ shapes["Rock"].shape, shapes["Paper"] },
+			{ shapes["Paper"].shape, shapes["Scissors"] },
+			{ shapes["Scissors"].shape, shapes["Rock"] },
+		};
+
 		std::unordered_map<const char*, uint16_t> scoreMap = {
 			{ "w", 6 },
 			{ "l", 0 },
@@ -89,9 +95,11 @@ int main()
 	std::cout << "Loading input.." << std::endl;
 
 	Game game = Game();
+	Game game2 = Game();
 
 	std::ifstream file("input.txt");
 
+	// Sample Data
 	//std::cout << "total score: " << game.gameScore << std::endl;
 	//game.gameScore += game.Evaluate("Y", "A");
 	//std::cout << "total score: " << game.gameScore << std::endl;
@@ -104,13 +112,37 @@ int main()
 	{
 		std::string line;
 		while (std::getline(file, line)) {
-			game.gameScore += game.Evaluate(std::string{ line[2] }, std::string{ line[0] });
+			std::string opponentInput = std::string{ line[0] };
+			std::string playerInput = std::string{ line[2] };
+
+			Hand opponentHand = game.playerInputMap[opponentInput];
+			Hand playerHand = game.playerInputMap[playerInput];
+
+			// Game 1: Opponent vs Player mapping
+			game.gameScore += game.Evaluate(playerHand, opponentHand);
+
+			// Game 2: Opponent vs Instruction mapping
+			if (playerInput == "Y") {
+				// force draw
+				playerHand = opponentHand;
+			}
+			else if (playerInput == "X") {
+				// force loss
+				playerHand = game.winMap[opponentHand.shape];
+			}
+			else if (playerInput == "Z") {
+				// force win
+				playerHand = game.loseMap[opponentHand.shape];
+			}
+
+			game2.gameScore += game2.Evaluate(playerHand, opponentHand);
 		}
 	}
 
 	file.close();
 
-	std::cout << "Total Game Score: " << game.gameScore << std::endl;
+	std::cout << "Game 1 Total Score: " << game.gameScore << std::endl;
+	std::cout << "Game 2 Total Score: " << game2.gameScore << std::endl;
 	
 	return 0;
 }
