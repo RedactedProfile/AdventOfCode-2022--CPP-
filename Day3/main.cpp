@@ -6,9 +6,13 @@
 #include <unordered_map>
 #include <map>
 #include <set>
+#include <ctime> // time_t
+#include "ExecutionTime.h"
 
 int main()
 {
+	ExecutionTimer<std::chrono::milliseconds> timer;
+
 	std::cout << "Advent of Code, Day 3: Rucksack Reorganization." << std::endl;
 	std::cout << "========================================" << std::endl;
 
@@ -141,6 +145,8 @@ int main()
 
 	std::cout << "Part 1 Total Sum: " << part1_sum << std::endl;
 	std::cout << "Part 2 Total Sum: " << part2_sum << std::endl;
+
+	timer.stop();
 	
 	return 0;
 }
