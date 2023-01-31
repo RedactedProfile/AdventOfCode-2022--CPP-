@@ -77,7 +77,6 @@ int main()
 			// Phase 4: Add rucksack to group
 			if (group.size() < 3) {
 				group.push_back(rucksack);
-				continue;
 			}
 			
 			// Phase 5: Every group of 3 rucksacks, find their badge
@@ -112,7 +111,6 @@ int main()
 
 						// Check if this letter exists in our little letter table, if not, create it
 						if (!letterCount.contains(letter)) {
-							//letterCount.insert(std::make_pair(letter, 0));
 							letterCount[letter] = 0;
 						}
 
@@ -127,7 +125,7 @@ int main()
 
 				// The top item in the list should be the only letter that appears three times. Check for this. And if so, add it up.
 				if (sortableLetterCount[0].second != 3) {
-					std::cerr << "Letter " << sortableLetterCount[0].first << " does not appear 3 times for this group.";
+					std::cerr << "Letter " << sortableLetterCount[0].first << " does not appear 3 times for this group." << std::endl;
 				}
 				else
 				{
@@ -135,7 +133,6 @@ int main()
 				}
 
 				group.clear();
-				std::cout << "New Group time" << std::endl;
 			}
 		}
 	}
