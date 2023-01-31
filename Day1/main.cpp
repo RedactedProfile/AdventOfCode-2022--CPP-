@@ -3,6 +3,7 @@
 #include <vector>
 #include <algorithm>
 #include <string>
+#include <ExecutionTime.h>
 
 void cprint(std::string out)
 {
@@ -62,6 +63,8 @@ public:
 
 int main()
 {
+	ExecutionTimer<std::chrono::milliseconds> timer;
+
 	cprint("Advent of Code, Day 1: Calorie Counting.");
 	cprint("========================================");
 
@@ -95,6 +98,8 @@ int main()
 
 	std::cout << "Part 1: Most calories carried by one elf :: " << Party::CountCaloriesRange(0, 1) << std::endl;
 	std::cout << "Part 2: Total calories of top 3 elves :: " << Party::CountCaloriesRange(0, 3) << std::endl;
+
+	timer.stop();
 
 	return 0;
 }

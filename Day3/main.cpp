@@ -7,7 +7,7 @@
 #include <map>
 #include <set>
 #include <ctime> // time_t
-#include "ExecutionTime.h"
+#include <ExecutionTime.h>
 
 int main()
 {

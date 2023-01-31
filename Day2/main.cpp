@@ -4,9 +4,12 @@
 #include <algorithm>
 #include <string>
 #include <unordered_map>
+#include <ExecutionTime.h>
 
 int main()
 {
+	ExecutionTimer<std::chrono::milliseconds> timer;
+
 	struct Hand
 	{
 		std::string shape = "";
@@ -144,6 +147,8 @@ int main()
 
 	std::cout << "Game 1 Total Score: " << game.gameScore << std::endl;
 	std::cout << "Game 2 Total Score: " << game2.gameScore << std::endl;
+
+	timer.stop();
 	
 	return 0;
 }
