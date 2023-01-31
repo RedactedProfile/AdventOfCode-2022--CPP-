@@ -52,15 +52,12 @@ int main()
 				rucksack[pouch][slot] = item;
 			}
 
-			// Phase 3: Determine duplicate
+			// Phase 3: Determine duplicate.  
 			bool doBreak = false;
 			for (uint16_t i = 0; i < pouchSize; ++i)
 			{
 				for (uint16_t o = 0; o < pouchSize; ++o)
 				{
-					std::string zzz_left = rucksack[0][i];
-					std::string zzz_right = rucksack[1][o];
-
 					if (rucksack[0][i] == rucksack[1][o]) {
 						// found the duplicate item
 						part1_sum += scoreTable[rucksack[0][i]];
@@ -71,6 +68,7 @@ int main()
 				if (doBreak)
 					break;
 			}
+			// personal note: this is probably the slowest possible way to scan. I'm sure there's a hundred better ways than this. 
 		}
 	}
 
