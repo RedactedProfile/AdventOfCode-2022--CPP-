@@ -48,13 +48,19 @@ int main()
 
 			// for part 2, we want to collect all isntances of where one elf so much as partially engulfs the other
 			if (
+				// test set: 23-25,24-95
 				//    24         >=       23       &&       24       <=         25
 				 (group[1].first >= group[0].first && group[1].first <= group[0].second) ||
 				//    95         >=       25       &&       95       <=         23
-				 (group[1].second >= group[0].second && group[1].second <= group[0].first) 
+				 (group[1].second >= group[0].second && group[1].second <= group[0].first) || 
+
+				//    23         >=       24       &&       23       <=         95
+				(group[0].first >= group[1].first && group[0].first <= group[1].second) ||
+				//    25         >=       95       &&       25       <=         24
+				(group[0].second >= group[1].second && group[0].second <= group[1].first) 
 			) 
 			{
-				std::cout << group[0].first << "-" << group[0].second << " overlaps with " << group[1].first << "-" << group[1].second << std::endl;
+				//std::cout << group[0].first << "-" << group[0].second << " overlaps with " << group[1].first << "-" << group[1].second << std::endl;
 				partialContainsCount++;
 			}
 		}
