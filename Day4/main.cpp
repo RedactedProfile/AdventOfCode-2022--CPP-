@@ -21,6 +21,7 @@ int main()
 	std::ifstream file("input.txt");
 
 	uint32_t fullyContainsCount = 0;
+	uint32_t partialContainsCount = 0;
 
 	if (file.is_open())
 	{
@@ -44,12 +45,25 @@ int main()
 			{
 				fullyContainsCount++;
 			}
+
+			// for part 2, we want to collect all isntances of where one elf so much as partially engulfs the other
+			if (
+				//    24         >=       23       &&       24       <=         25
+				 (group[1].first >= group[0].first && group[1].first <= group[0].second) ||
+				//    95         >=       25       &&       95       <=         23
+				 (group[1].second >= group[0].second && group[1].second <= group[0].first) 
+			) 
+			{
+				std::cout << group[0].first << "-" << group[0].second << " overlaps with " << group[1].first << "-" << group[1].second << std::endl;
+				partialContainsCount++;
+			}
 		}
 	}
 
 	file.close();
 
 	std::cout << "Part 1: Fully Contained Pairs: " << fullyContainsCount << std::endl;
+	std::cout << "Part 2: Partially overlapped Pairs: " << partialContainsCount << std::endl;
 
 	timer.stop();
 }
