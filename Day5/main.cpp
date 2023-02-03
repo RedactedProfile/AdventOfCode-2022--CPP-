@@ -71,17 +71,15 @@ int main()
 
 			if (readMode == ReadMode::HEAD)
 			{
-				// strip special characters
 				std::string lineStripped = "";
-				for (uint16_t i = 0; i < line.size(); ++i) {
-					std::string c = std::string{ line[i] };
-					if (c != "" && c != "[" && c != "]") {
-						lineStripped.append(c);
-					}
+				uint8_t stride = 4;
+				for (uint16_t i = 0; i < line.size(); i += stride) {
+					std::string chunk = line.substr(i, stride);
+					lineStripped.append(std::string{ chunk[1] });
 				}
 
-				head.push_back(line);
-				//head.push_back(lineStripped);
+				//std::cout << lineStripped << std::endl;
+				head.push_back(lineStripped);
 			}
 			else if (readMode == ReadMode::INSTRUCTIONS)
 			{
@@ -121,16 +119,14 @@ int main()
 		{
 			std::string c = std::string{ ch };
 
-			if (c != "" && c != " " && c != "[" && c != "]") { // ignore all characters and whitespace except the letters and numbers
-				if (headParseMode == HeadParseMode::BAY) {
-					Stack stack = Stack();
-					stack.slot = std::stoi(c);
-					bay.stacks.push_back(stack);
-				}
-				else if (headParseMode == HeadParseMode::STACK) {
-					Crate crate = Crate();
-					crate.label = c;
-				}
+			if (headParseMode == HeadParseMode::BAY) {
+				Stack stack = Stack();
+				stack.slot = std::stoi(c);
+				bay.stacks.push_back(stack);
+			}
+			else if (headParseMode == HeadParseMode::STACK) {
+				Crate crate = Crate();
+				crate.label = c;
 			}
 		}
 	}
