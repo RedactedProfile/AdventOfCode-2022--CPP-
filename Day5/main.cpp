@@ -25,6 +25,47 @@ struct Stack
 struct Bay
 {
 	std::vector<Stack> stacks = {};
+
+	void Move(uint8_t from, uint8_t to)
+	{
+		Crate originalCrate = stacks[from].crates.back();
+		stacks[from].crates.pop_back();
+		stacks[to].crates.push_back(originalCrate);
+	}
+
+	void Render()
+	{
+		unsigned int maxStack = 0;
+		// we need to find the tallest stack
+		for (int s = 0; s < stacks.size(); ++s)
+		{
+			unsigned int size = stacks[s].crates.size();
+			if (size > maxStack)
+				maxStack = size;
+		}
+
+		// output crates
+		for (int s = 0; s < stacks.size(); ++s)
+		{
+			Stack stack = stacks[s];
+
+			for (int c = 0; c < maxStack; ++c)
+			{
+				//std::cout << "x:" << s << " y:" << c << std::endl;
+
+				if (stack.crates.size() > c) {
+					std::cout << "x:" << s << " y:" << c << std::endl;
+				}
+			}
+		}
+
+		// Stack labels
+		for (int s = 0; s < stacks.size(); ++s)
+		{
+			std::cout << " " << s+1 << "  ";
+		}
+		std::cout << std::endl;
+	}
 };
 
 class Instruction 
@@ -123,7 +164,7 @@ int main()
 
 	for (std::string line : head)
 	{
-		std::cout << line << std::endl;
+		//std::cout << line << std::endl;
 		
 		headParseMode = bay.stacks.size() > 0 ? HeadParseMode::STACK : HeadParseMode::BAY;
 
@@ -154,13 +195,23 @@ int main()
 		}
 		else if (IMove* i = dynamic_cast<IMove*>(inst))
 		{
-			std::cout << "_i: Move " << i->quantity << " from " << i->from << " to " << i->to << std::endl;
+			//std::cout << "_i: Move " << i->quantity << " from " << i->from << " to " << i->to << std::endl;
+			for (uint8_t m = 0; m < i->quantity; ++m) 
+			{
+				bay.Move(i->from - 1, i->to - 1);
+			}
 		}
-
-		
 	}
 
-	std::cout << "Part 1: : " << "" << std::endl;
+	bay.Render();
+	
+	std::string part1Answer = "";
+	for (auto& stack : bay.stacks)
+	{
+		part1Answer.append(stack.crates.back().label);
+	}
+
+	std::cout << "Part 1: : " << part1Answer << std::endl;
 	std::cout << "Part 2: : " << "" << std::endl;
 
 	timer.stop();
