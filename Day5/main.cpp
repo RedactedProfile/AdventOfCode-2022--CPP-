@@ -42,7 +42,7 @@ struct Bay
 	void MoveStack(uint8_t quantity, uint8_t from, uint8_t to)
 	{
 		std::vector<Crate> crates(quantity);
-		for (unsigned int i = 0; i < quantity; ++i)
+		for (uint16_t i = 0; i < quantity; ++i)
 		{
 			Crate originalCrate = stacks[from].crates.back();
 			stacks[from].crates.pop_back();
@@ -59,8 +59,8 @@ struct Bay
 	{
 		std::vector<std::string> map = {};
 
-		unsigned int maxStack = 0;
-		for (int i = 0; i < stacks.size(); ++i)
+		uint16_t maxStack = 0;
+		for (uint16_t i = 0; i < stacks.size(); ++i)
 		{
 			if (stacks[i].crates.size() > maxStack)
 			{
@@ -68,10 +68,10 @@ struct Bay
 			}
 		}
 
-		for (unsigned int c = 0; c < maxStack; ++c)
+		for (uint16_t c = 0; c < maxStack; ++c)
 		{
 			std::string line = "";
-			for (unsigned int s = 0; s < stacks.size(); ++s)
+			for (uint16_t s = 0; s < stacks.size(); ++s)
 			{
 				Stack stack = stacks[s];
 				line.append( stack.crates.size() > c ? "[" + stack.crates[c].label + "] " : "    ");
@@ -80,13 +80,13 @@ struct Bay
 		}
 		std::reverse(map.begin(), map.end());
 
-		for (unsigned int i = 0; i < map.size(); ++i)
+		for (uint16_t i = 0; i < map.size(); ++i)
 		{
 			std::cout << map[i] << std::endl;
 		}
 
 		// Stack labels
-		for (int s = 0; s < stacks.size(); ++s)
+		for (uint16_t s = 0; s < stacks.size(); ++s)
 		{
 			std::cout << " " << s+1 << "  ";
 		}
@@ -249,7 +249,7 @@ int main()
 	std::string part1Answer = "";
 	std::string part2Answer = "";
 
-	for(unsigned int s = 0; s < bay.stacks.size(); ++s)
+	for(uint16_t s = 0; s < bay.stacks.size(); ++s)
 	{
 		part1Answer.append(bay.stacks[s].crates.back().label);
 		part2Answer.append(bay2.stacks[s].crates.back().label);
