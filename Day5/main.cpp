@@ -18,7 +18,7 @@ struct Crate
 
 struct Stack
 {
-	uint16_t slot = 0;
+	std::string slot = "";
 	std::vector<Crate> crates = {};
 };
 
@@ -88,7 +88,7 @@ struct Bay
 		// Stack labels
 		for (uint16_t s = 0; s < stacks.size(); ++s)
 		{
-			std::cout << " " << s+1 << "  ";
+			std::cout << " " << stacks[s].slot << "  ";
 		}
 		std::cout << std::endl;
 	}
@@ -201,7 +201,7 @@ int main()
 
 			if (headParseMode == HeadParseMode::BAY) {
 				Stack stack = Stack();
-				stack.slot = std::stoi(c);
+				stack.slot = c;
 				bay.stacks.push_back(stack);
 			}
 			else if (headParseMode == HeadParseMode::STACK && c != " ") {
