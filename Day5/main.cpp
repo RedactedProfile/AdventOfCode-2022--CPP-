@@ -7,6 +7,7 @@
 #include <vector>
 #include <algorithm>
 #include <string>
+#include <variant>
 #include <ExecutionTime.h>
 
 
@@ -26,13 +27,24 @@ struct Bay
 	std::vector<Stack> stacks = {};
 };
 
-struct Instruction {};
-
-struct IMove : Instruction
+class Instruction 
 {
+public:
+	virtual void test() {}
+};
+
+class IMove : public Instruction
+{
+public:
 	uint32_t quantity = 0;
 	uint32_t from = 0;
 	uint32_t to = 0;
+};
+
+class IDelete : public Instruction
+{
+public:
+	std::string nah = "";
 };
 
 int main()
@@ -47,7 +59,7 @@ int main()
 	std::ifstream file("input.txt");
 
 	std::vector<std::string> head = {};
-	std::vector<Instruction> instructions = {};
+	std::vector<Instruction*> instructions = {};
 
 	// Phase 1: Read the data from file
 
@@ -84,8 +96,8 @@ int main()
 			else if (readMode == ReadMode::INSTRUCTIONS)
 			{
 				if (line.starts_with("move")) {
-					IMove i = IMove();
-					auto _ = sscanf(line.c_str(), "move %d from %d to %d", &i.quantity, &i.from, &i.to);
+					IMove* i = new IMove();
+					auto _ = sscanf(line.c_str(), "move %d from %d to %d", &i->quantity, &i->from, &i->to);
 					instructions.push_back(i);
 				}
 			}
@@ -130,6 +142,22 @@ int main()
 				bay.stacks[i].crates.push_back(crate);
 			}
 		}
+	}
+
+	// Phase 3: Run instruction set
+
+	for (Instruction* inst : instructions)
+	{
+		if (IDelete* i = dynamic_cast<IDelete*>(inst))
+		{
+			std::cout << "_i: : " << i->nah << std::endl;
+		}
+		else if (IMove* i = dynamic_cast<IMove*>(inst))
+		{
+			std::cout << "_i: Move " << i->quantity << " from " << i->from << " to " << i->to << std::endl;
+		}
+
+		
 	}
 
 	std::cout << "Part 1: : " << "" << std::endl;
