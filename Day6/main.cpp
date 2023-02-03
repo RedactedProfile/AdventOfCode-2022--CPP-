@@ -8,7 +8,33 @@
 #include <algorithm>
 #include <string>
 #include <map>
+#include <list>
 #include <ExecutionTime.h>
+
+bool checkPacketMatch(std::string chunk)
+{
+	std::list<char> storage(chunk.begin(), chunk.end());
+	storage.sort();
+	storage.unique();
+
+	return storage.size() == chunk.size();
+}
+
+int scanPackets(std::string line, unsigned int chunkSize)
+{
+	int charactersProcessed = -1;
+	for (uint16_t i = chunkSize; i < line.size(); ++i)
+	{
+		std::string chunk = line.substr(i - chunkSize, chunkSize);
+		if (checkPacketMatch(chunk))
+		{
+			charactersProcessed = i;
+			break;
+		}
+	}
+
+	return charactersProcessed;
+}
 
 int main()
 {
@@ -28,31 +54,19 @@ int main()
 		std::string line;
 		while (std::getline(file, line)) {
 
-			//std::cout << line << std::endl;
-
-			for (uint16_t i = 3; i < line.size(); ++i)
-			{
-				std::string sub = line.substr(i - 3, 4);
-				std::map<std::string, bool> storage = {};
-				storage[std::string{ sub[0] }] = true;
-				storage[std::string{ sub[1] }] = true;
-				storage[std::string{ sub[2] }] = true;
-				storage[std::string{ sub[3] }] = true;
-
-				if (storage.size() == 4)
-				{
-					std::cout << "Part 1: Unique 4 found at itr " << i + 1 << ":" << sub << "." << std::endl;
-					break;
-
-				}
+			int startOfPacketMarker = scanPackets(line, 4);
+			if (startOfPacketMarker >= 0) {
+				std::cout << "start-of-packet marker at " << startOfPacketMarker  << std::endl;
+			}
+			
+			int startOfMessageMarker = scanPackets(line, 14);
+			if (startOfMessageMarker >= 0) {
+				std::cout << "start-of-message marker at " << startOfMessageMarker  << std::endl;
 			}
 		}
 	}
 
 	file.close();
-
-	//std::cout << "Part 1: : " << std::endl;
-	std::cout << "Part 2: : " << std::endl;
 
 	timer.stop();
 }
