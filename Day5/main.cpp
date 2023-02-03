@@ -33,30 +33,39 @@ struct Bay
 		stacks[to].crates.push_back(originalCrate);
 	}
 
+	void MoveStack(uint8_t quantity, uint8_t from, uint8_t to)
+	{
+
+	}
+
 	void Render()
 	{
+		std::vector<std::string> map = {};
+
 		unsigned int maxStack = 0;
-		// we need to find the tallest stack
-		for (int s = 0; s < stacks.size(); ++s)
+		for (int i = 0; i < stacks.size(); ++i)
 		{
-			unsigned int size = stacks[s].crates.size();
-			if (size > maxStack)
-				maxStack = size;
+			if (stacks[i].crates.size() > maxStack)
+			{
+				maxStack = stacks[i].crates.size();
+			}
 		}
 
-		// output crates
-		for (int s = 0; s < stacks.size(); ++s)
+		for (unsigned int c = 0; c < maxStack; ++c)
 		{
-			Stack stack = stacks[s];
-
-			for (int c = 0; c < maxStack; ++c)
+			std::string line = "";
+			for (unsigned int s = 0; s < stacks.size(); ++s)
 			{
-				//std::cout << "x:" << s << " y:" << c << std::endl;
-
-				if (stack.crates.size() > c) {
-					std::cout << "x:" << s << " y:" << c << std::endl;
-				}
+				Stack stack = stacks[s];
+				line.append( stack.crates.size() > c ? "[" + stack.crates[c].label + "] " : "    ");
 			}
+			map.push_back(line);
+		}
+		std::reverse(map.begin(), map.end());
+
+		for (unsigned int i = 0; i < map.size(); ++i)
+		{
+			std::cout << map[i] << std::endl;
 		}
 
 		// Stack labels
@@ -185,6 +194,9 @@ int main()
 		}
 	}
 
+	std::cout << "Before: " << std::endl;
+	bay.Render();
+
 	// Phase 3: Run instruction set
 
 	for (Instruction* inst : instructions)
@@ -203,6 +215,7 @@ int main()
 		}
 	}
 
+	std::cout << "After: " << std::endl;
 	bay.Render();
 	
 	std::string part1Answer = "";
