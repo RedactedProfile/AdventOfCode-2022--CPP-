@@ -26,6 +26,9 @@ struct Bay
 {
 	std::vector<Stack> stacks = {};
 
+	/*
+	* Shift one box at a time
+	*/
 	void Move(uint8_t from, uint8_t to)
 	{
 		Crate originalCrate = stacks[from].crates.back();
@@ -33,11 +36,25 @@ struct Bay
 		stacks[to].crates.push_back(originalCrate);
 	}
 
+	/* 
+	* Shift a stack of boxes all at once
+	*/
 	void MoveStack(uint8_t quantity, uint8_t from, uint8_t to)
 	{
-
+		std::vector<Crate> crates(quantity);
+		for (unsigned int i = 0; i < quantity; ++i)
+		{
+			Crate originalCrate = stacks[from].crates.back();
+			stacks[from].crates.pop_back();
+			crates[i] = originalCrate;
+		}
+		std::reverse(crates.begin(), crates.end());
+		stacks[to].crates.insert(stacks[to].crates.end(), std::begin(crates), std::end(crates));
 	}
 
+	/*
+	* Display stack output
+	*/
 	void Render()
 	{
 		std::vector<std::string> map = {};
@@ -159,6 +176,7 @@ int main()
 	// Phase 2: Parse the Head data
 	
 	Bay bay = Bay();
+	Bay bay2;
 
 	//  first, reverse the vector so we can read this "bottom to top"
 	std::reverse(std::begin(head), std::end(head));
@@ -194,7 +212,9 @@ int main()
 		}
 	}
 
-	std::cout << "Before: " << std::endl;
+	bay2 = bay;
+
+	std::cout << "Original: " << std::endl;
 	bay.Render();
 
 	// Phase 3: Run instruction set
@@ -208,24 +228,37 @@ int main()
 		else if (IMove* i = dynamic_cast<IMove*>(inst))
 		{
 			//std::cout << "_i: Move " << i->quantity << " from " << i->from << " to " << i->to << std::endl;
+
+			// Part 1
 			for (uint8_t m = 0; m < i->quantity; ++m) 
 			{
 				bay.Move(i->from - 1, i->to - 1);
 			}
+
+			// Part 2
+			bay2.MoveStack(i->quantity, i->from - 1, i->to - 1);
 		}
 	}
 
-	std::cout << "After: " << std::endl;
+	std::cout << "Part 1 Render: " << std::endl;
 	bay.Render();
+
+	std::cout << "Part 2 Render: " << std::endl;
+	bay2.Render();
 	
 	std::string part1Answer = "";
-	for (auto& stack : bay.stacks)
+	std::string part2Answer = "";
+
+	for(unsigned int s = 0; s < bay.stacks.size(); ++s)
 	{
-		part1Answer.append(stack.crates.back().label);
+		part1Answer.append(bay.stacks[s].crates.back().label);
+		part2Answer.append(bay2.stacks[s].crates.back().label);
 	}
 
+
+	std::cout << "What crates are on top of each stack?" << std::endl;
 	std::cout << "Part 1: : " << part1Answer << std::endl;
-	std::cout << "Part 2: : " << "" << std::endl;
+	std::cout << "Part 2: : " << part2Answer << std::endl;
 
 	timer.stop();
 }
