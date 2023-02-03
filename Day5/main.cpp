@@ -115,18 +115,19 @@ int main()
 		
 		headParseMode = bay.stacks.size() > 0 ? HeadParseMode::STACK : HeadParseMode::BAY;
 
-		for (auto& ch : line)
+		for(uint8_t i = 0; i < line.size(); ++i)
 		{
-			std::string c = std::string{ ch };
+			std::string c = std::string{ line[i] };
 
 			if (headParseMode == HeadParseMode::BAY) {
 				Stack stack = Stack();
 				stack.slot = std::stoi(c);
 				bay.stacks.push_back(stack);
 			}
-			else if (headParseMode == HeadParseMode::STACK) {
+			else if (headParseMode == HeadParseMode::STACK && c != " ") {
 				Crate crate = Crate();
 				crate.label = c;
+				bay.stacks[i].crates.push_back(crate);
 			}
 		}
 	}
