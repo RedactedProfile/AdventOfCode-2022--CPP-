@@ -10,8 +10,7 @@ struct inode
 	std::string name;
 	std::vector<inode*> nodes;
 
-	inode()
-	{}
+	inode() {}
 
 	inode(std::string _name)
 	{
@@ -21,8 +20,13 @@ struct inode
 
 struct dirNode : public inode
 {
+	dirNode* parent = nullptr;
 	unsigned int accumulatedSize = 0;
 
+	dirNode(std::string _name)
+	{
+		name = _name;
+	}
 };
 
 struct fileNode : public inode
@@ -31,31 +35,37 @@ struct fileNode : public inode
 
 	fileNode(std::string _name)
 	{
-
+		name = _name;
 	}
 };
 
 class FileTree
 {
 protected:
-	inode* root;
-	inode* focusedDirectory;
+	dirNode* root;
+	dirNode* focusedDirectory;
 public:
 	FileTree()
 	{
-		root = new inode("/");
+		root = new dirNode("/");
 		focusedDirectory = root;
 	}
 
-	inode* AddFile(std::string name, unsigned int size)
+	fileNode* AddFile(std::string name, unsigned int size)
 	{
-		inode* newFile = new fileNode();
-		newFile->
+		fileNode* newFile = new fileNode(name);
+		newFile->size = size;
+		focusedDirectory->nodes.push_back(newFile);
+
+		return newFile;
 	}
 
-	inode* AddDirectory(std::string name)
+	dirNode* AddDirectory(std::string name)
 	{
+		dirNode* newDir = new dirNode(name);
+		focusedDirectory->nodes.push_back(newDir);
 
+		return newDir;
 	}
 
 	void EvaluateCommand(std::string command)
