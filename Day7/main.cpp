@@ -61,6 +61,7 @@ public:
 		fileNode* newFile = new fileNode(name);
 		newFile->size = size;
 		focusedDirectory->nodes.push_back(newFile);
+		focusedDirectory->accumulatedSize += size;
 
 		return newFile;
 	}
@@ -92,6 +93,7 @@ public:
 
 	void Tree()
 	{
+		// Render a tree from the current directory
 
 	}
 
@@ -180,6 +182,8 @@ int main()
 	}
 
 	file.close();
+
+	tree->EvaluateCommand("tree");
 
 	timer.stop();
 }
