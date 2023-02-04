@@ -87,14 +87,34 @@ public:
 		}
 		else if (command.starts_with("tree"))
 		{
-			Tree();
+			Tree(focusedDirectory, 0);
 		}
 	}
 
-	void Tree()
+	void Tree(dirNode* tree, unsigned int step = 0)
 	{
-		// Render a tree from the current directory
+		if (step == 0) {
+			std::cout << std::setw(step) << " - " << tree->name << " (dir)" << std::endl;
+		}
 
+		step += 1;
+		unsigned int substep = step * 2;
+		
+		for (inode* node : tree->nodes )
+		{
+			if (dirNode* dir = dynamic_cast<dirNode*>(node))
+			{
+				std::cout << std::setw(substep) << " - " << dir->name << " (dir)" << std::endl;
+				if (dir->nodes.size() > 0)
+				{
+					Tree(dir, step + 1);
+				}
+			}
+			else if (fileNode * fil = dynamic_cast<fileNode*>(node))
+			{
+				std::cout << std::setw(substep) << " - " << fil->name << " (file, size="<< fil->size <<")" << std::endl;
+			}
+		}
 	}
 
 	void ChangeDir(std::string arg)
@@ -130,7 +150,7 @@ public:
 
 	void ListDir()
 	{
-
+		// we don't really need to do anything here for the input provided already lists the output
 	}
 };
 
@@ -183,6 +203,7 @@ int main()
 
 	file.close();
 
+	tree->EvaluateCommand("cd /");
 	tree->EvaluateCommand("tree");
 
 	timer.stop();
