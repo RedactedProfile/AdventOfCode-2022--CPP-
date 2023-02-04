@@ -10,31 +10,67 @@ struct inode
 	std::string name;
 	std::vector<inode*> nodes;
 
+	inode()
+	{}
+
 	inode(std::string _name)
 	{
 		name = _name;
 	}
 };
 
-struct dir : public inode
+struct dirNode : public inode
 {
 	unsigned int accumulatedSize = 0;
 
 };
 
-struct file : public inode
+struct fileNode : public inode
 {
 	unsigned int size = 0;
+
+	fileNode(std::string _name)
+	{
+
+	}
 };
 
 class FileTree
 {
 protected:
 	inode* root;
+	inode* focusedDirectory;
 public:
 	FileTree()
 	{
-		root = new inode("root");
+		root = new inode("/");
+		focusedDirectory = root;
+	}
+
+	inode* AddFile(std::string name, unsigned int size)
+	{
+		inode* newFile = new fileNode();
+		newFile->
+	}
+
+	inode* AddDirectory(std::string name)
+	{
+
+	}
+
+	void EvaluateCommand(std::string command)
+	{
+
+	}
+
+	void ChangeDir(std::string arg)
+	{
+
+	}
+
+	void ListDir()
+	{
+
 	}
 };
 
@@ -59,7 +95,10 @@ int main()
 		while (std::getline(file, line)) {
 
 			std::cout << line << std::endl;
-			
+
+			if (line.starts_with("$")) {
+
+			}
 		}
 	}
 
