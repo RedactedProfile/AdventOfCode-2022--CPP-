@@ -64,6 +64,16 @@ public:
 		focusedDirectory = root;
 	}
 
+	dirNode* GetRoot()
+	{
+		return root;
+	}
+
+	dirNode* GetCWD()
+	{
+		return focusedDirectory;
+	}
+
 	fileNode* AddFile(std::string name, unsigned int size)
 	{
 		fileNode* newFile = new fileNode(name);
@@ -162,6 +172,28 @@ public:
 	{
 		// we don't really need to do anything here for the input provided already lists the output
 	}
+
+	unsigned int CalculateDirectorySize(dirNode* tree, unsigned int max_dir_size)
+	{
+		unsigned int out = 0;
+
+		for (inode* node : tree->nodes)
+		{
+			if (dirNode* dir = dynamic_cast<dirNode*>(node))
+			{
+				if (dir->accumulatedSize <= max_dir_size) {
+					out += dir->accumulatedSize;
+				}
+				
+				if (dir->nodes.size() > 0)
+				{
+					out += CalculateDirectorySize(dir, max_dir_size);
+				}
+			}
+		}
+
+		return out;
+	}
 };
 
 int main()
@@ -228,7 +260,11 @@ int main()
 	timer.stop();
 
 	tree->EvaluateCommand("cd /");
-	tree->EvaluateCommand("tree");
+	//tree->EvaluateCommand("tree");
+
+	unsigned int part1Size = tree->CalculateDirectorySize(tree->GetRoot(), 100000);
+
+	std::cout << "Part 1 Answer: " << part1Size << std::endl;
 
 	std::cout << "Press something" << std::endl;
 	std::cin.get();
