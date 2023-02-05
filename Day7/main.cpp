@@ -93,26 +93,28 @@ public:
 
 	void Tree(dirNode* tree, unsigned int step = 0)
 	{
-		if (step == 0) {
-			std::cout << std::setw(step) << " - " << tree->name << " (dir)" << std::endl;
-		}
+		unsigned int substep = step + 4;
 
-		step += 1;
-		unsigned int substep = step * 2;
+		//if (step == 0) {
+			std::cout << std::setfill(' ') << std::setw(step) << " - " << tree->name << " (dir)" << std::endl;
+		//}
 		
 		for (inode* node : tree->nodes )
 		{
 			if (dirNode* dir = dynamic_cast<dirNode*>(node))
 			{
-				std::cout << std::setw(substep) << " - " << dir->name << " (dir)" << std::endl;
 				if (dir->nodes.size() > 0)
 				{
-					Tree(dir, step + 1);
+					Tree(dir, substep);
+				}
+				else
+				{
+					std::cout << std::setfill(' ') << std::setw(substep) << " - " << dir->name << " (dir)" << std::endl;
 				}
 			}
 			else if (fileNode * fil = dynamic_cast<fileNode*>(node))
 			{
-				std::cout << std::setw(substep) << " - " << fil->name << " (file, size="<< fil->size <<")" << std::endl;
+				std::cout << std::setfill(' ') << std::setw(substep) << " - " << fil->name << " (file, size="<< fil->size <<")" << std::endl;
 			}
 		}
 	}
