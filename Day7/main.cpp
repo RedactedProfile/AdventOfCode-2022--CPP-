@@ -31,6 +31,14 @@ public:
 	{
 		name = _name;
 	}
+
+	void AccumulateDirectorySize(unsigned int _size)
+	{
+		accumulatedSize += _size;
+		if (parent != nullptr) {
+			parent->AccumulateDirectorySize(_size);
+		}
+	}
 };
 
 class fileNode : public inode
@@ -61,7 +69,7 @@ public:
 		fileNode* newFile = new fileNode(name);
 		newFile->size = size;
 		focusedDirectory->nodes.push_back(newFile);
-		focusedDirectory->accumulatedSize += size;
+		focusedDirectory->AccumulateDirectorySize(size);
 
 		return newFile;
 	}
@@ -96,7 +104,7 @@ public:
 		unsigned int substep = step + 4;
 
 		//if (step == 0) {
-			std::cout << std::setfill(' ') << std::setw(step) << " - " << tree->name << " (dir)" << std::endl;
+			std::cout << std::setfill(' ') << std::setw(step) << " - " << tree->name << " (dir, totalsize=" << tree->accumulatedSize << ")" << std::endl;
 		//}
 		
 		for (inode* node : tree->nodes )
@@ -109,7 +117,7 @@ public:
 				}
 				else
 				{
-					std::cout << std::setfill(' ') << std::setw(substep) << " - " << dir->name << " (dir)" << std::endl;
+					std::cout << std::setfill(' ') << std::setw(substep) << " - " << dir->name << " (dir, totalsize=" << dir->accumulatedSize << ")" << std::endl;
 				}
 			}
 			else if (fileNode * fil = dynamic_cast<fileNode*>(node))
@@ -169,15 +177,28 @@ int main()
 
 	FileTree* tree = new FileTree();
 
-	//tree->AddDirectory("A");
-	//tree->ChangeDir("A");
-	//tree->AddFile("file1.txt", 3424);
-	//tree->AddFile("file2.pdf", 545345341234);
-	//tree->AddDirectory("SubA");
-	//tree->AddDirectory("SubB");
-	//tree->AddDirectory("SubC");
-	//tree->ChangeDir("SubB");
-	//tree->AddFile("file3.psd", 12313122);
+	tree->AddDirectory("a");
+	tree->ChangeDir("a");
+	tree->AddDirectory("e");
+	tree->ChangeDir("e");
+	tree->AddFile("i", 584);
+	tree->ChangeDir("..");
+	tree->AddFile("f", 29116);
+	tree->AddFile("g", 2557);
+	tree->AddFile("h.lst", 62596);
+	tree->ChangeDir("..");
+	tree->AddFile("b.txt", 14848514);
+	tree->AddFile("c.dat", 8504156);
+	tree->AddDirectory("d");
+	tree->ChangeDir("d");
+	tree->AddFile("j", 4060174);
+	tree->AddFile("d.log", 8033020);
+	tree->AddFile("d.ext", 5626152);
+	tree->AddFile("k", 7214296);
+
+	tree->ChangeDir("/");
+	tree->EvaluateCommand("tree");
+
 
 	std::ifstream file("input.txt");
 
@@ -205,8 +226,10 @@ int main()
 
 	file.close();
 
+
+	timer.stop();
+
 	tree->EvaluateCommand("cd /");
 	tree->EvaluateCommand("tree");
 
-	timer.stop();
 }
