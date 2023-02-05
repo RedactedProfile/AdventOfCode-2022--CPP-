@@ -1,4 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS
+#define MAX_DRIVE_SIZE 70000000
+
 
 #include <iostream>
 #include <fstream>
@@ -194,6 +196,29 @@ public:
 
 		return out;
 	}
+
+	std::vector<dirNode*> ScanDirectoriesLarger(dirNode* tree, unsigned int min_dir_size)
+	{
+		std::vector<dirNode*> dirs = {};
+
+		for (inode* node : tree->nodes)
+		{
+			if (dirNode* dir = dynamic_cast<dirNode*>(node))
+			{
+				if (dir->accumulatedSize >= min_dir_size) {
+					dirs.push_back(dir);
+				}
+
+				if (dir->nodes.size() > 0)
+				{
+					std::vector<dirNode*> appendables = ScanDirectoriesLarger(dir, min_dir_size);
+					dirs.insert(dirs.begin(), appendables.begin(), appendables.end());
+				}
+			}
+		}
+
+		return dirs;
+	}
 };
 
 int main()
@@ -260,11 +285,27 @@ int main()
 	timer.stop();
 
 	tree->EvaluateCommand("cd /");
-	//tree->EvaluateCommand("tree");
+	tree->EvaluateCommand("tree");
 
+	std::cout << "====================================================" << std::endl;
+
+	// Part 1: Discover the accumulated size of all directories under a max size 
 	unsigned int part1Size = tree->CalculateDirectorySize(tree->GetRoot(), 100000);
+	std::cout << "(Part 1) The accumulated size of all directories below 100000 is " << part1Size << std::endl;
 
-	std::cout << "Part 1 Answer: " << part1Size << std::endl;
+	// Part 2: Find the smallest directory to delete that would free up enough space required 
+	unsigned int minimumToFree = 30000000;
+	unsigned int currentUsed = tree->GetRoot()->accumulatedSize;
+	unsigned int freeSpace = MAX_DRIVE_SIZE - currentUsed;
+	unsigned int minimumDirToDelete = minimumToFree - freeSpace;
+
+	std::vector<dirNode*> directories = tree->ScanDirectoriesLarger(tree->GetRoot(), minimumDirToDelete);
+	if (directories.size() > 0) {
+		std::sort(directories.begin(), directories.end(), [](dirNode* a, dirNode* b) { return a->accumulatedSize < b->accumulatedSize; });
+		
+		std::cout << "(Part 2) The directory with the smallest size to free up enough room is " << directories[0]->name << " with a contained size of " << directories[0]->accumulatedSize << std::endl;
+	}
+	
 
 	std::cout << "Press something" << std::endl;
 	std::cin.get();
