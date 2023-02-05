@@ -177,28 +177,27 @@ int main()
 
 	FileTree* tree = new FileTree();
 
-	tree->AddDirectory("a");
-	tree->ChangeDir("a");
-	tree->AddDirectory("e");
-	tree->ChangeDir("e");
-	tree->AddFile("i", 584);
-	tree->ChangeDir("..");
-	tree->AddFile("f", 29116);
-	tree->AddFile("g", 2557);
-	tree->AddFile("h.lst", 62596);
-	tree->ChangeDir("..");
-	tree->AddFile("b.txt", 14848514);
-	tree->AddFile("c.dat", 8504156);
-	tree->AddDirectory("d");
-	tree->ChangeDir("d");
-	tree->AddFile("j", 4060174);
-	tree->AddFile("d.log", 8033020);
-	tree->AddFile("d.ext", 5626152);
-	tree->AddFile("k", 7214296);
+	//tree->AddDirectory("a");
+	//tree->ChangeDir("a");
+	//tree->AddDirectory("e");
+	//tree->ChangeDir("e");
+	//tree->AddFile("i", 584);
+	//tree->ChangeDir("..");
+	//tree->AddFile("f", 29116);
+	//tree->AddFile("g", 2557);
+	//tree->AddFile("h.lst", 62596);
+	//tree->ChangeDir("..");
+	//tree->AddFile("b.txt", 14848514);
+	//tree->AddFile("c.dat", 8504156);
+	//tree->AddDirectory("d");
+	//tree->ChangeDir("d");
+	//tree->AddFile("j", 4060174);
+	//tree->AddFile("d.log", 8033020);
+	//tree->AddFile("d.ext", 5626152);
+	//tree->AddFile("k", 7214296);
 
-	tree->ChangeDir("/");
-	tree->EvaluateCommand("tree");
-
+	//tree->ChangeDir("/");
+	//tree->EvaluateCommand("tree");
 
 	std::ifstream file("input.txt");
 
@@ -226,10 +225,11 @@ int main()
 
 	file.close();
 
-
 	timer.stop();
 
 	tree->EvaluateCommand("cd /");
 	tree->EvaluateCommand("tree");
 
+	std::cout << "Press something" << std::endl;
+	std::cin.get();
 }
