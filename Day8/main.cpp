@@ -66,7 +66,7 @@ int main()
 		for (unsigned int x = 0; x < forest.grid[y].size(); ++x)
 		{
 			Tree* col = forest.grid[y][x];
-			std::cout << col->z << std::endl;
+			//std::cout << col->z << std::endl;
 
 			int
 				l = x - 1,
@@ -78,7 +78,7 @@ int main()
 
 			// if this tree is an edge, it's visible by default 
 			if (l == -1 || u == -1 || r >= forest.grid[y].size() || d >= forest.grid.size()) {
-				std::cout << "Tree is an edge at " << x << "," << y << std::endl;
+				//std::cout << "Tree is an edge at " << x << "," << y << std::endl;
 				col->isVisible = true;
 				continue;
 			}
@@ -115,19 +115,52 @@ int main()
 
 				while (lVisible && l >= 0)
 				{
+					if (col->z <= forest.grid[y][l]->z)
+					{
+						lVisible = false;
+					}
+
 					--l;
 				}
 
 				while (uVisible && u >= 0)
 				{
+					if (col->z <= forest.grid[u][x]->z)
+					{
+						uVisible = false;
+					}
+
 					--u;
 				}
+
+				// is this tree visible from any of the directions?
+				if (rVisible || dVisible || lVisible || uVisible)
+				{
+					col->isVisible = true;
+				}
+			}
+		}
+	}
+
+	// Phase 3: for Part 1 answer, we need to know how many trees are visible from the outside
+	unsigned int part1Answer = 0;
+	for (unsigned int y = 0; y < forest.grid.size(); ++y)
+	{
+		for (unsigned int x = 0; x < forest.grid[y].size(); ++x)
+		{
+			if (forest.grid[y][x]->isVisible)
+			{
+				part1Answer++;
 			}
 		}
 	}
 
 
 	file.close();
+
+	std::cout << "============================================================================" << std::endl;
+	std::cout << "Part 1: How many trees are visible from outside: " << part1Answer << std::endl;
+	std::cout << "Part 2: : " << std::endl;
 
 	timer.stop();
 }
