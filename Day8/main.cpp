@@ -67,6 +67,48 @@ int main()
 		{
 			Tree* col = forest.grid[y][x];
 			std::cout << col->z << std::endl;
+
+			int
+				l = x - 1,
+				u = y - 1,
+				d = y + 1,
+				r = x + 1;
+
+			//std::cout << "Left=" << l << "; Up=" << u << "; Right=" << r << "; Down=" << d << std::endl;
+
+			// if this tree is an edge, it's visible by default 
+			if (l == -1 || u == -1 || r >= forest.grid[y].size() || d >= forest.grid.size()) {
+				std::cout << "Tree is an edge at " << x << "," << y << std::endl;
+				col->isVisible = true;
+				continue;
+			}
+
+			if (col->isVisible == false)
+			{
+				// I guess my first idea is simply to explode outward from this tree in each direction
+				// I'm 100% positive there's a better way than this, as this is super slow and super awkward
+
+				while (r < forest.grid[y].size())
+				{
+					// check all values to the right of this tree, if any are a bigger number, this tree is not visible
+					++r;
+				}
+
+				while (d < forest.grid.size())
+				{
+					++d;
+				}
+
+				while (l >= 0)
+				{
+					--l;
+				}
+
+				while (u >= 0)
+				{
+					--u;
+				}
+			}
 		}
 	}
 
