@@ -88,23 +88,37 @@ int main()
 				// I guess my first idea is simply to explode outward from this tree in each direction
 				// I'm 100% positive there's a better way than this, as this is super slow and super awkward
 
-				while (r < forest.grid[y].size())
+				bool rVisible = true,
+					 dVisible = true,
+					 lVisible = true,
+					 uVisible = true;
+				while (rVisible && r < forest.grid[y].size())
 				{
 					// check all values to the right of this tree, if any are a bigger number, this tree is not visible
+					if (col->z <= forest.grid[y][r]->z)
+					{
+						rVisible = false;
+					}
+
 					++r;
 				}
 
-				while (d < forest.grid.size())
+				while (dVisible && d < forest.grid.size())
 				{
+					if (col->z <= forest.grid[d][x]->z)
+					{
+						dVisible = false;
+					}
+
 					++d;
 				}
 
-				while (l >= 0)
+				while (lVisible && l >= 0)
 				{
 					--l;
 				}
 
-				while (u >= 0)
+				while (uVisible && u >= 0)
 				{
 					--u;
 				}
