@@ -3,12 +3,14 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <unordered_map>
 #include <ExecutionTime.h>
 
 struct Tree
 {
 	unsigned int x = 0, y = 0, z = 0;
 	bool isVisible = false;
+	unsigned int scenicScore = 0;
 	Tree* up = nullptr;
 	Tree* down = nullptr;
 	Tree* left = nullptr;
@@ -88,62 +90,82 @@ int main()
 				// I guess my first idea is simply to explode outward from this tree in each direction
 				// I'm 100% positive there's a better way than this, as this is super slow and super awkward
 
-				bool rVisible = true,
-					 dVisible = true,
-					 lVisible = true,
-					 uVisible = true;
-				while (rVisible && r < forest.grid[y].size())
+				std::unordered_map<std::string, bool> visibleFrom = {
+					{"up", true},
+					{"right", true},
+					{"down", true},
+					{"left", true},
+				};
+
+				std::unordered_map<std::string, unsigned int> scenicScoreCard = {
+					{"up", 0},
+					{"right", 0},
+					{"down", 0},
+					{"left", 0},
+				};
+				
+				
+				while (visibleFrom["right"] && r < forest.grid[y].size())
 				{
 					// check all values to the right of this tree, if any are a bigger number, this tree is not visible
 					if (col->z <= forest.grid[y][r]->z)
 					{
-						rVisible = false;
+						visibleFrom["right"] = false;
 					}
 
 					++r;
+					scenicScoreCard["right"]++;
 				}
+				
 
-				while (dVisible && d < forest.grid.size())
+				while (visibleFrom["down"] && d < forest.grid.size())
 				{
 					if (col->z <= forest.grid[d][x]->z)
 					{
-						dVisible = false;
+						visibleFrom["down"] = false;
 					}
 
 					++d;
+					scenicScoreCard["down"]++;
 				}
+				
 
-				while (lVisible && l >= 0)
+				while (visibleFrom["left"] && l >= 0)
 				{
 					if (col->z <= forest.grid[y][l]->z)
 					{
-						lVisible = false;
+						visibleFrom["left"] = false;
 					}
 
 					--l;
+					scenicScoreCard["left"]++;
 				}
 
-				while (uVisible && u >= 0)
+				while (visibleFrom["up"] && u >= 0)
 				{
 					if (col->z <= forest.grid[u][x]->z)
 					{
-						uVisible = false;
+						visibleFrom["up"] = false;
 					}
 
 					--u;
+					scenicScoreCard["up"]++;
 				}
 
 				// is this tree visible from any of the directions?
-				if (rVisible || dVisible || lVisible || uVisible)
+				if (visibleFrom["right"] || visibleFrom["left"] || visibleFrom["up"] || visibleFrom["down"])
 				{
 					col->isVisible = true;
 				}
+
+				col->scenicScore = scenicScoreCard["up"] * scenicScoreCard["down"] * scenicScoreCard["left"] * scenicScoreCard["right"];
 			}
 		}
 	}
 
 	// Phase 3: for Part 1 answer, we need to know how many trees are visible from the outside
 	unsigned int part1Answer = 0;
+	std::list<unsigned int> part2Answer = {};
 	for (unsigned int y = 0; y < forest.grid.size(); ++y)
 	{
 		for (unsigned int x = 0; x < forest.grid[y].size(); ++x)
@@ -152,15 +174,19 @@ int main()
 			{
 				part1Answer++;
 			}
+
+			part2Answer.push_back(forest.grid[y][x]->scenicScore);
 		}
 	}
 
 
 	file.close();
 
+	part2Answer.sort();
+
 	std::cout << "============================================================================" << std::endl;
 	std::cout << "Part 1: How many trees are visible from outside: " << part1Answer << std::endl;
-	std::cout << "Part 2: : " << std::endl;
+	std::cout << "Part 2: Best Scenic Score: " << part2Answer.back() << std::endl;
 
 	timer.stop();
 }
