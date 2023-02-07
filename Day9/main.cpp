@@ -1,7 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 
-#define MAP_WIDTH 64
-#define MAP_HEIGHT 32
+#define MAP_WIDTH 16
+#define MAP_HEIGHT 16
 
 #include <iostream>
 #include <fstream>
@@ -21,6 +21,8 @@ public:
 	const char* label = "-";
 	Vector2i coordinates = { 0, 0 };
 	int priority = 0;
+
+	virtual void stub() {}
 };
 
 class eInfoStart : public Entity
@@ -57,15 +59,18 @@ class Map
 public:
 	const char* map[MAP_WIDTH][MAP_HEIGHT] = {};
 
+	// Do not know if Part 2 would favor having the trail separated or not, so opting too out of abundance of caution instead of overriding characters in the map
+	unsigned int trail[MAP_WIDTH][MAP_HEIGHT] = {};
+
 	std::unordered_map<std::string, Entity*> entities = {};
 
 	
 	Map()
 	{
-		initialize();
+		Initialize();
 	}
 
-	void initialize()
+	void Initialize()
 	{
 		for (int y = 0; y < MAP_HEIGHT; ++y)
 			for (int x = 0; x < MAP_WIDTH; ++x)
@@ -81,6 +86,35 @@ public:
 		entities["tail"]->coordinates = center;
 	}
 
+	void Step(std::string direction, unsigned int steps)
+	{
+		if (steps <= 0) return;
+
+		eHead* head = dynamic_cast<eHead*>(entities["head"]);
+
+		Vector2i before = head->coordinates,
+				 after = Vector2i();
+
+			 if (direction == "U") head->coordinates.y--;
+		else if (direction == "D") head->coordinates.y++;
+		else if (direction == "L") head->coordinates.x--;
+		else if (direction == "R") head->coordinates.x++;
+
+		after = head->coordinates;
+
+		UpdateTail(before, after);
+
+		if (steps >= 1)
+			Step(direction, --steps);
+	}
+
+	void UpdateTail(Vector2i before, Vector2i after)
+	{
+		eTail* tail = dynamic_cast<eTail*>(entities["tail"]);
+		// we COULD brute force this based on the directional diff
+		trail[after.y][after.x] = 1;
+	}
+
 	void Render()
 	{
 		for (int y = 0; y < MAP_HEIGHT; ++y)
@@ -89,7 +123,13 @@ public:
 			for (int x = 0; x < MAP_WIDTH; ++x)
 			{
 				std::string ch = std::string{ map[y][x] };
-				
+			
+				// Override with trail tile here
+				if (trail[y][x] > 0) {
+					ch = "#";
+				}
+
+				// Check if any Entities to override the tile here
 				std::vector<Entity*> entitiesHere = {};
 
 				for (auto& it : entities)
@@ -139,10 +179,17 @@ int main()
 		std::string line;
 		while (std::getline(file, line)) {
 
-			std::cout << line << std::endl;
+			char dir[2] = "";
+			int steps = 0;
+			auto _ = sscanf(line.c_str(), "%s %d", &dir, &steps);
 
+			map.Step(std::string{ dir }, steps);
+			//delete dir;
 		}
 	}
+
+	
+	map.Render();
 
 	file.close();
 
