@@ -1,7 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 
-#define MAP_WIDTH 32
-#define MAP_HEIGHT 16
+#define MAP_WIDTH 50
+#define MAP_HEIGHT 50
 
 #include <iostream>
 #include <fstream>
@@ -241,11 +241,11 @@ int main()
 	std::cout << "========================================" << std::endl;
 
 	Map map = Map();
-	map.Render();
+	//map.Render();
 
 	std::cout << "Loading input.." << std::endl;
 
-	std::ifstream file("input_example.txt");
+	std::ifstream file("input.txt");
 
 	// Phase 1: Read the data from file
 	if (file.is_open())
@@ -260,8 +260,8 @@ int main()
 			for (int i = 0; i < steps; ++i)
 			{
 				map.Step(std::string{ dir });
-				std::cout << "=================================" << std::endl;;
 				map.Render();
+				std::cout << "=================================" << std::endl;;
 			}
 		}
 	}
@@ -269,6 +269,7 @@ int main()
 
 	file.close();
 
+	map.Render();
 
 	unsigned int tailVisitedCount = map.CountVisited();
 	std::cout << "Part 1 Answer: Tail visited this many different places: " << tailVisitedCount << std::endl;
