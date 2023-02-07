@@ -88,6 +88,7 @@ public:
 
 	void Step(std::string direction)
 	{
+		// Adjust the Head
 		eHead* head = dynamic_cast<eHead*>(entities["head"]);
 
 		Vector2i before = head->coordinates,
@@ -100,15 +101,66 @@ public:
 
 		after = head->coordinates;
 
-		UpdateTail(before, after);
+		// Adjust the Tail
+		eTail* tail = dynamic_cast<eTail*>(entities["tail"]);
+		if (tail->coordinates.x == before.x && tail->coordinates.y == before.y) {
+			// dont do anything this turn
+			return;
+		}
 
+		Vector2i diff = { after.x - before.x, after.y - before.y };
+
+		// The Tail cannot further away than touching
+		//  find out where the head winds up in relation to where the tail currently sits, adjust as necessary
+
+		// Check if left or right 
+		Vector2i diff2 = {
+			head->coordinates.x - tail->coordinates.x,
+			head->coordinates.y - tail->coordinates.y
+		};
+		while (diff2.x >= 2)
+		{
+			tail->coordinates.x++;
+			diff2.x = head->coordinates.x - tail->coordinates.x;
+		}
+		while (diff2.x <= -2)
+		{
+			tail->coordinates.x--;
+			diff2.x = head->coordinates.x - tail->coordinates.x;
+		}
+		while (diff2.y >= 2)
+		{
+			tail->coordinates.y++;
+			diff2.y = head->coordinates.y - tail->coordinates.y;
+		}
+		while (diff2.y <= -2)
+		{
+			tail->coordinates.y--;
+			diff2.y = head->coordinates.y - tail->coordinates.y;
+		}
+
+		
+		if (diff2.x != 0 && diff2.y != 0)
+		{
+			Vector2i diff3 = {
+				diff2.x - diff.x,
+				diff2.y - diff.y
+			};
+
+			tail->coordinates.y += diff3.y;
+			tail->coordinates.x += diff3.x;
+		}
+
+		trail[tail->coordinates.y][tail->coordinates.x] = 1;
+
+		
 	}
 
 	void UpdateTail(Vector2i before, Vector2i after)
 	{
-		eTail* tail = dynamic_cast<eTail*>(entities["tail"]);
-		// we COULD brute force this based on the directional diff
-		trail[after.y][after.x] = 1;
+		//eTail* tail = dynamic_cast<eTail*>(entities["tail"]);
+		//// we COULD brute force this based on the directional diff
+		//trail[after.y][after.x] = 1;
 	}
 
 	unsigned int CountVisited()
