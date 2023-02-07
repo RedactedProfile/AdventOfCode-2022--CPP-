@@ -86,6 +86,7 @@ public:
 		entities["tail"]->coordinates = center;
 	}
 
+	int detectedDiagonalSkip = 0;
 	void Step(std::string direction)
 	{
 		// Adjust the Head
@@ -108,7 +109,10 @@ public:
 			return;
 		}
 
-		Vector2i diff = { after.x - before.x, after.y - before.y };
+		Vector2i diff = { 
+			after.x - before.x, 
+			after.y - before.y 
+		};
 
 		// The Tail cannot further away than touching
 		//  find out where the head winds up in relation to where the tail currently sits, adjust as necessary
@@ -142,18 +146,24 @@ public:
 		
 		if (diff2.x != 0 && diff2.y != 0)
 		{
-			Vector2i diff3 = {
-				diff2.x - diff.x,
-				diff2.y - diff.y
-			};
+			if (detectedDiagonalSkip == 0) {
+				detectedDiagonalSkip = 1;
+			}
+			else if (detectedDiagonalSkip == 1)
+			{
+				Vector2i diff3 = {
+					diff2.x - diff.x,
+					diff2.y - diff.y
+				};
+				// I somehow need to skip this the first time it's detected..
+				tail->coordinates.y += diff3.y;
+				tail->coordinates.x += diff3.x;
 
-			tail->coordinates.y += diff3.y;
-			tail->coordinates.x += diff3.x;
+				detectedDiagonalSkip = 0;
+			}
 		}
 
 		trail[tail->coordinates.y][tail->coordinates.x] = 1;
-
-		
 	}
 
 	void UpdateTail(Vector2i before, Vector2i after)
