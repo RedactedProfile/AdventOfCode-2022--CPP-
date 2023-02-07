@@ -1,7 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 
-#define MAP_WIDTH 50
-#define MAP_HEIGHT 50
+#define MAP_WIDTH 1024
+#define MAP_HEIGHT 1024
 
 #include <iostream>
 #include <fstream>
@@ -122,6 +122,12 @@ public:
 			head->coordinates.x - tail->coordinates.x,
 			head->coordinates.y - tail->coordinates.y
 		};
+
+		if ((diff2.x == 1 || diff2.x == -1) && (diff2.y == 1 || diff2.y == -1)) {
+			// Don't do anything
+			return;
+		}
+
 		while (diff2.x >= 2)
 		{
 			tail->coordinates.x++;
@@ -146,21 +152,13 @@ public:
 		
 		if (diff2.x != 0 && diff2.y != 0)
 		{
-			if (detectedDiagonalSkip == 0) {
-				detectedDiagonalSkip = 1;
-			}
-			else if (detectedDiagonalSkip == 1)
-			{
-				Vector2i diff3 = {
-					diff2.x - diff.x,
-					diff2.y - diff.y
-				};
-				// I somehow need to skip this the first time it's detected..
-				tail->coordinates.y += diff3.y;
-				tail->coordinates.x += diff3.x;
-
-				detectedDiagonalSkip = 0;
-			}
+			Vector2i diff3 = {
+				diff2.x - diff.x,
+				diff2.y - diff.y
+			};
+			// I somehow need to skip this the first time it's detected..
+			tail->coordinates.y += diff3.y;
+			tail->coordinates.x += diff3.x;
 		}
 
 		trail[tail->coordinates.y][tail->coordinates.x] = 1;
@@ -260,8 +258,8 @@ int main()
 			for (int i = 0; i < steps; ++i)
 			{
 				map.Step(std::string{ dir });
-				map.Render();
-				std::cout << "=================================" << std::endl;;
+				//map.Render();
+				//std::cout << "=================================" << std::endl;;
 			}
 		}
 	}
