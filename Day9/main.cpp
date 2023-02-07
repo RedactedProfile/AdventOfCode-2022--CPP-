@@ -1,6 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 
-#define MAP_WIDTH 16
+#define MAP_WIDTH 32
 #define MAP_HEIGHT 16
 
 #include <iostream>
@@ -57,10 +57,10 @@ public:
 class Map
 {
 public:
-	const char* map[MAP_WIDTH][MAP_HEIGHT] = {};
+	const char* map[MAP_HEIGHT][MAP_WIDTH] = {};
 
 	// Do not know if Part 2 would favor having the trail separated or not, so opting too out of abundance of caution instead of overriding characters in the map
-	unsigned int trail[MAP_WIDTH][MAP_HEIGHT] = {};
+	unsigned int trail[MAP_HEIGHT][MAP_WIDTH] = {};
 
 	std::unordered_map<std::string, Entity*> entities = {};
 
@@ -86,10 +86,8 @@ public:
 		entities["tail"]->coordinates = center;
 	}
 
-	void Step(std::string direction, unsigned int steps)
+	void Step(std::string direction)
 	{
-		if (steps <= 0) return;
-
 		eHead* head = dynamic_cast<eHead*>(entities["head"]);
 
 		Vector2i before = head->coordinates,
@@ -104,8 +102,6 @@ public:
 
 		UpdateTail(before, after);
 
-		if (steps >= 1)
-			Step(direction, --steps);
 	}
 
 	void UpdateTail(Vector2i before, Vector2i after)
@@ -113,6 +109,22 @@ public:
 		eTail* tail = dynamic_cast<eTail*>(entities["tail"]);
 		// we COULD brute force this based on the directional diff
 		trail[after.y][after.x] = 1;
+	}
+
+	unsigned int CountVisited()
+	{
+		unsigned int count = 0;
+
+		for (int y = 0; y < MAP_HEIGHT; ++y)
+		{
+			for (int x = 0; x < MAP_WIDTH; ++x)
+			{
+				if (trail[y][x] > 0)
+					++count;
+			}
+		}
+
+		return count;
 	}
 
 	void Render()
@@ -183,15 +195,21 @@ int main()
 			int steps = 0;
 			auto _ = sscanf(line.c_str(), "%s %d", &dir, &steps);
 
-			map.Step(std::string{ dir }, steps);
-			//delete dir;
+			for (int i = 0; i < steps; ++i)
+			{
+				map.Step(std::string{ dir });
+				std::cout << "=================================" << std::endl;;
+				map.Render();
+			}
 		}
 	}
 
-	
-	map.Render();
 
 	file.close();
+
+
+	unsigned int tailVisitedCount = map.CountVisited();
+	std::cout << "Part 1 Answer: Tail visited this many different places: " << tailVisitedCount << std::endl;
 
 	timer.stop();
 }
