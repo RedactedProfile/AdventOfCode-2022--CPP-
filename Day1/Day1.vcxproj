@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="main_old.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AdventOfCode\AdventOfCode.vcxproj">

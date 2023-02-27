@@ -2,6 +2,7 @@
 
 #define MAP_WIDTH 1024
 #define MAP_HEIGHT 1024
+#define ROPE_LENGTH 2
 
 #include <iostream>
 #include <fstream>
@@ -78,7 +79,13 @@ public:
 
 		entities["info_start"] = new eInfoStart();
 		entities["head"] = new eHead();
-		entities["tail"] = new eTail();
+		for (int i = 0; i < ROPE_LENGTH - 1; ++i)
+		{
+			eTail* t = new eTail();
+			t->label = std::to_string(i).c_str();
+			entities["tail"+i] = new eTail();
+		}
+		
 
 		Vector2i center = { MAP_WIDTH / 2, MAP_HEIGHT / 2 };
 		entities["info_start"]->coordinates = center;
@@ -128,22 +135,22 @@ public:
 			return;
 		}
 
-		while (diff2.x >= 2)
+		while (diff2.x >= ROPE_LENGTH)
 		{
 			tail->coordinates.x++;
 			diff2.x = head->coordinates.x - tail->coordinates.x;
 		}
-		while (diff2.x <= -2)
+		while (diff2.x <= -ROPE_LENGTH)
 		{
 			tail->coordinates.x--;
 			diff2.x = head->coordinates.x - tail->coordinates.x;
 		}
-		while (diff2.y >= 2)
+		while (diff2.y >= ROPE_LENGTH)
 		{
 			tail->coordinates.y++;
 			diff2.y = head->coordinates.y - tail->coordinates.y;
 		}
-		while (diff2.y <= -2)
+		while (diff2.y <= -ROPE_LENGTH)
 		{
 			tail->coordinates.y--;
 			diff2.y = head->coordinates.y - tail->coordinates.y;

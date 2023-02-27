@@ -1,105 +1,40 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <algorithm>
 #include <string>
-#include <ExecutionTime.h>
+#include <numeric>
+#include <algorithm>
 
-void cprint(std::string out)
-{
-	std::cout << out << std::endl;
-}
+int main() {
+	auto party = std::vector<uint32_t>{};
+	uint32_t active_elf = 0;
 
-struct Elf
-{
-	uint32_t id = 0;
-	uint64_t calories = 0;
-	std::vector<uint32_t> food = {};
-
-	void AddFood(uint32_t item)
-	{
-		food.push_back(item);
-		calories += item;
-	}
-};
-
-class Party
-{
-public:
-	inline static std::vector<Elf*> Elves = {};
-
-	static Elf* CreateElf() {
-		Elf* e = new Elf();
-		e->id = Elves.size() + 1;
-		Elves.push_back(e);
-		return e;
-	}
-
-	static bool SortFunction(Elf* a, Elf* b)
-	{
-		return a->calories > b->calories;
-	}
-
-	static void SortPartyByCalories()
-	{
-		std::sort(Elves.begin(), Elves.end(), SortFunction);
-	}
-
-	static uint64_t CountCaloriesRange(uint32_t start, uint32_t end)
-	{
-		uint64_t totalCalories = 0;
-
-		if (start < Elves.size() && ((start + end) <= Elves.size()))
-		{
-			for (int32_t i = start; i < start + end; ++i)
-			{
-				totalCalories += Elves[i]->calories;
-			}
-		}
-
-		return totalCalories;
-	}
-};
-
-int main()
-{
-	ExecutionTimer<std::chrono::milliseconds> timer;
-
-	cprint("Advent of Code, Day 1: Calorie Counting.");
-	cprint("========================================");
-
-	cprint("Loading input..");
+	auto finalize_elf = [&party, &active_elf]() {
+		party.push_back(active_elf);
+		active_elf = 0;
+	};
 
 	std::ifstream file("input.txt");
-
-	cprint("Starting party.");
-
-	Elf* activeElf = Party::CreateElf();
-
-	if (file.is_open())
-	{
+	if (file.is_open()) {
 		std::string line;
 		while (std::getline(file, line)) {
-			if ("" == line)
-			{
-				activeElf = Party::CreateElf();
+			if (line.empty()) {
+				finalize_elf();
 				continue;
 			}
 
-			activeElf->AddFood(std::stoi(line));
+			active_elf += std::stoi(line);
 		}
+
+		finalize_elf();
 	}
 
 	file.close();
 
-	std::cout << "Elves in party: " << Party::Elves.size() << std::endl;
+	std::ranges::sort(party.begin(), party.end(), [](const uint32_t a, const uint32_t b){ return a > b; });  // reverse sort in one step
 
-	Party::SortPartyByCalories();
+	const uint32_t part1 = party[0];
+	const uint32_t part2 = std::accumulate(party.begin(), party.begin() + 3, 0);									// sum an array
 
-	std::cout << "Part 1: Most calories carried by one elf :: " << Party::CountCaloriesRange(0, 1) << std::endl;
-	std::cout << "Part 2: Total calories of top 3 elves :: " << Party::CountCaloriesRange(0, 3) << std::endl;
-
-	timer.stop();
-
-	return 0;
+	std::cout << "Part 1: " << part1 << std::endl << "Part 2: " << part2 << std::endl;
 }
