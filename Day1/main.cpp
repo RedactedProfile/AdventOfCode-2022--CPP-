@@ -4,8 +4,14 @@
 #include <string>
 #include <numeric>
 #include <algorithm>
+#include <ExecutionTime.h>
 
 int main() {
+	ExecutionTimer<std::chrono::milliseconds> timer;
+
+	std::cout << "Advent of Code, Day 1: Calorie Counting." << std::endl;
+	std::cout << "========================================" << std::endl;
+
 	auto party = std::vector<uint32_t>{};
 	uint32_t active_elf = 0;
 
@@ -37,4 +43,6 @@ int main() {
 	const uint32_t part2 = std::accumulate(party.begin(), party.begin() + 3, 0);									// sum an array
 
 	std::cout << "Part 1: " << part1 << std::endl << "Part 2: " << part2 << std::endl;
+
+	timer.stop();
 }

@@ -1,4 +1,4 @@
-#ifndef EXECUTION_TIMER_H
+﻿#ifndef EXECUTION_TIMER_H
 #define EXECUTION_TIMER_H
 
 #include <chrono>
@@ -18,8 +18,7 @@ public:
         const auto end = Clock::now();
         std::ostringstream strStream;
         strStream << "Destructor Elapsed: "
-            << std::chrono::duration_cast<Resolution>(end - mStart).count()
-            << "ms"
+            << std::chrono::duration_cast< std::chrono::duration<float, std::milli> >(end - mStart)
             << std::endl;
         std::cout << strStream.str() << std::endl;
     }
@@ -28,8 +27,7 @@ public:
         const auto end = Clock::now();
         std::ostringstream strStream;
         strStream << "Stop Elapsed: "
-            << std::chrono::duration_cast<Resolution>(end - mStart).count()
-            << "ms"
+            << std::chrono::duration_cast<std::chrono::duration<float, std::milli>>(end - mStart)
             << std::endl;
         std::cout << strStream.str() << std::endl;
     }
